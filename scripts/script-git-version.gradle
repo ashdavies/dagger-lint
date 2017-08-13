@@ -1,0 +1,19 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'org.ajoberstar:grgit:1.7.2'
+  }
+}
+
+import org.ajoberstar.grgit.Grgit
+
+ext {
+  git = Grgit.open(currentDir: projectDir)
+  tags = git.tag.list()
+
+  configuration.versionName = tags.size() > 0 ? tags.last().getName() : '0.0.0'
+  configuration.versionCode = tags.size()
+}

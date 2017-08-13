@@ -1,0 +1,44 @@
+apply plugin: 'java'
+
+repositories {
+  jcenter()
+
+  maven {
+    url 'http://dl.bintray.com/android/android-tools'
+  }
+}
+
+dependencies {
+  implementation libraries.android.lint.api
+  implementation libraries.android.lint.checks
+
+  implementation libraries.dagger.core
+
+  testImplementation libraries.jUnit
+  testImplementation libraries.android.lint.all
+  testImplementation libraries.android.lint.tests
+  testImplementation libraries.utils
+}
+
+jar {
+  manifest {
+    attributes('Lint-Registry': 'io.ashdavies.lint.dagger.DaggerIssueRegistry')
+  }
+}
+
+configurations {
+  lintChecks
+}
+
+dependencies {
+  lintChecks files(jar)
+}
+
+defaultTasks 'assemble'
+
+task install(type: Copy) {
+  from configurations.lintChecks
+  into System.getProperty('user.home') + '/.android/lint/'
+}
+
+build.finalizedBy(install)

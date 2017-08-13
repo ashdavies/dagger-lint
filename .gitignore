@@ -1,0 +1,48 @@
+# built application files
+*.apk
+*.ap_
+
+lint
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+classes/
+gen-external-apklibs/
+
+# maven output folder
+target
+
+# Project files
+local.properties
+
+# IntelliJ files
+.idea
+*.iml
+
+# Signing files
+secring.gpg
+
+# OSX files
+.DS_Store
+
+# profiler dumps
+/captures
+*.hprof
+
+# Gradle Generated
+**/build/
+.gradle
+.gradletasknamecache
+signingConfigs.*
+gradle.properties
+
+#jimu mirror
+mirror/
+*.orig

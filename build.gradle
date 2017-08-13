@@ -1,0 +1,19 @@
+allprojects {
+  buildscript {
+    repositories.clear()
+  }
+
+  repositories {
+    jcenter()
+    google()
+  }
+}
+
+buildscript {
+  apply from: file('scripts/script-dependencies.gradle')
+  apply from: file('scripts/script-git-version.gradle')
+
+  repositories {
+    mavenCentral()
+  }
+}
