@@ -15,6 +15,7 @@ dependencies {
   implementation libraries.dagger.core
 
   testImplementation libraries.jUnit
+  testImplementation libraries.truth
   testImplementation libraries.android.lint.all
   testImplementation libraries.android.lint.tests
   testImplementation libraries.utils

@@ -2,9 +2,10 @@ package io.ashdavies.lint.dagger;
 
 import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.TextFormat;
 import java.util.Collections;
 import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ConcreteModuleDetectorTest extends AbstractDetectorTest {
 
@@ -19,29 +20,12 @@ public class ConcreteModuleDetectorTest extends AbstractDetectorTest {
   }
 
   public void testAbstractModuleDetection() throws Exception {
-    String actual = lintProject(
-        "Beta.java=>src/test/dagger/Beta.java",
-        "Module.java=>src/test/dagger/Module.java",
-        "AbstractModuleTestCase.java=>src/test/io/ashdavies/dagger/lint/AbstractModuleTestCase.java"
-    );
-
-    assertEquals(noWarnings(), actual);
+    assertThat(project("AbstractModuleTestCase.java=>src/test/io/ashdavies/lint/dagger/AbstractModuleTestCase.java"))
+        .isEqualTo(noWarnings());
   }
 
   public void testConcreteModuleDetector() throws Exception {
-    String expected = "src/test/io/ashdavies/dagger/lint/ConcreteModuleTestCase.java: Error: "
-        + ConcreteModuleDetector.ISSUE.getBriefDescription(TextFormat.TEXT)
-        + " ["
-        + ConcreteModuleDetector.ISSUE.getId()
-        + "]\n"
-        + "1 errors, 0 warnings\n";
-
-    String actual = lintProject(
-        "Beta.java=>src/test/dagger/Beta.java",
-        "Module.java=>src/test/dagger/Module.java",
-        "ConcreteModuleTestCase.java=>src/test/io/ashdavies/dagger/lint/ConcreteModuleTestCase.java"
-    );
-
-    assertEquals(expected, actual);
+    assertThat(project("ConcreteModuleTestCase.java=>src/test/io/ashdavies/lint/dagger/ConcreteModuleTestCase.java"))
+        .isEqualTo(error("src/test/io/ashdavies/lint/dagger/ConcreteModuleTestCase.java", ConcreteModuleDetector.ISSUE));
   }
 }

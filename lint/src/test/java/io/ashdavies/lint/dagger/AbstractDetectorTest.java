@@ -1,7 +1,10 @@
 package io.ashdavies.lint.dagger;
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest;
+import com.android.tools.lint.detector.api.Issue;
+import com.android.tools.lint.detector.api.TextFormat;
 import com.android.utils.SdkUtils;
+import com.google.common.collect.ObjectArrays;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +16,9 @@ import java.security.CodeSource;
 
 public abstract class AbstractDetectorTest extends LintDetectorTest {
 
+  private static final String PATH_DAGGER_LIBRARY = "libs/dagger.jar=>libs/dagger.jar";
   private static final String PATH_TEST_RESOURCES = "resources/test/";
-  private static final String EMPTY_TEST_CASE = "EmptyTestCase.java";
+
   private static final String NO_WARNINGS = "No warnings.";
 
   @Override
@@ -51,11 +55,15 @@ public abstract class AbstractDetectorTest extends LintDetectorTest {
     return null;
   }
 
+  String error(String name, Issue issue) {
+    return String.format("%s: Error: %s [%s]\n1 errors, 0 warnings\n", name, issue.getBriefDescription(TextFormat.TEXT), issue.getId());
+  }
+
   String noWarnings() {
     return NO_WARNINGS;
   }
 
-  String emptyTestCase() throws Exception {
-    return lintFiles(EMPTY_TEST_CASE);
+  String project(String... path) throws Exception {
+    return lintProject(ObjectArrays.concat(PATH_DAGGER_LIBRARY, path));
   }
 }
