@@ -20,12 +20,12 @@ public class ConcreteModuleDetectorTest extends AbstractDetectorTest {
   }
 
   public void testAbstractModuleDetection() throws Exception {
-    assertThat(project("AbstractModuleTestCase.java=>src/test/io/ashdavies/lint/dagger/AbstractModuleTestCase.java"))
+    assertThat(project("src/test/AbstractModuleTestCase.java=>src/test/io/ashdavies/lint/dagger/AbstractModuleTestCase.java"))
         .isEqualTo(noWarnings());
   }
 
   public void testConcreteModuleDetector() throws Exception {
-    assertThat(project("ConcreteModuleTestCase.java=>src/test/io/ashdavies/lint/dagger/ConcreteModuleTestCase.java"))
+    assertThat(project("src/test/ConcreteModuleTestCase.java=>src/test/io/ashdavies/lint/dagger/ConcreteModuleTestCase.java"))
         .isEqualTo(error("src/test/io/ashdavies/lint/dagger/ConcreteModuleTestCase.java", ConcreteModuleDetector.ISSUE));
   }
 }

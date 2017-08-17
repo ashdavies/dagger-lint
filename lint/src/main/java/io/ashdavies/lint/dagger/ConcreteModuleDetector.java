@@ -16,16 +16,18 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import lombok.ast.Annotation;
 import lombok.ast.AstVisitor;
 import lombok.ast.ClassDeclaration;
 import lombok.ast.ForwardingAstVisitor;
+import lombok.ast.Modifiers;
 import lombok.ast.Node;
 
 public class ConcreteModuleDetector extends Detector implements Detector.JavaScanner {
 
   private static final Implementation implementation = new Implementation(ConcreteModuleDetector.class, Scope.JAVA_FILE_SCOPE);
 
-  private static final String DAGGER_MODULE_ANNOTATION = "dagger.Module";
+  private static final String DAGGER_MODULE = "dagger.Module";
 
   static final Issue ISSUE = Issue.create(
       "ConcreteModule",
@@ -50,7 +52,7 @@ public class ConcreteModuleDetector extends Detector implements Detector.JavaSca
 
   @Override
   public List<Class<? extends Node>> getApplicableNodeTypes() {
-    return Collections.singletonList(ClassDeclaration.class);
+    return Collections.singletonList(Annotation.class);
   }
 
   @Override
@@ -67,19 +69,22 @@ public class ConcreteModuleDetector extends Detector implements Detector.JavaSca
     }
 
     @Override
-    public boolean visitClassDeclaration(ClassDeclaration declaration) {
-      int flags = declaration.astModifiers().getEffectiveModifierFlags();
-      if ((flags & Modifier.ABSTRACT) != 0) {
-        return false;
+    public boolean visitAnnotation(Annotation node) {
+      String type = node.astAnnotationTypeReference().getTypeName();
+      if (DAGGER_MODULE.equals(type)) {
+        Node parent = node.getParent();
+        if (parent instanceof Modifiers) {
+          parent = parent.getParent();
+          if (parent instanceof ClassDeclaration) {
+            int flags = ((ClassDeclaration) parent).astModifiers().getEffectiveModifierFlags();
+            if ((flags & Modifier.ABSTRACT) == 0) {
+              context.report(ISSUE, Location.create(context.file), ISSUE.getBriefDescription(TextFormat.TEXT));
+            }
+          }
+        }
       }
 
-      /*JavaParser.ResolvedNode resolved = context.resolve(declaration);
-      if (resolved.getAnnotation(DAGGER_MODULE_ANNOTATION) == null) {
-        return false;
-      }*/
-
-      context.report(ISSUE, Location.create(context.file), ISSUE.getBriefDescription(TextFormat.TEXT));
-      return super.visitClassDeclaration(declaration);
+      return super.visitAnnotation(node);
     }
   }
 }
